@@ -2,10 +2,7 @@
 
 """ 
     代理服务server端                                                                       
-    Author : zay
-    Email  : kill84144159@hotmail.com
-
-    TODO : 是否使用gevent
+    Author : Kk
 """
 
 import tornado.web
@@ -187,23 +184,25 @@ class MainHandler(tornado.web.RequestHandler):
                 
             elif resp.code == 599:
                 # 599未知错误使用urllib2重试
-                req = urllib2.Request(self.path,
-                                    data=self.req_data['body'],
-                                    headers=self.req_data['headers'])
-                try:
-                    del resp
-                    resp = urllib2.urlopen(req, timeout=10)
-                    resp.body = resp.read()
-                
-                except urllib2.HTTPError, e:
-                    resp = e
-                    resp.body = resp.read()
-                    
-                except urllib2.URLError,e:
-                    logging.info(str(e))
-                    self.report(u"591", str(e))
-                    self.finish()
-                    return
+                #req = urllib2.Request(self.path,
+                #                    data=self.req_data['body'],
+                #                    headers=self.req_data['headers'])
+                #try:
+                #    del resp
+                #    resp = urllib2.urlopen(req, timeout=10)
+                #    resp.body = resp.read()
+                #
+                #except urllib2.HTTPError, e:
+                #    resp = e
+                #    resp.body = resp.read()
+                #    
+                #except urllib2.URLError,e:
+                #    logging.info(str(e))
+                #    self.report(u"591", str(e))
+                #    self.finish()
+                #    return
+                self.finish()
+                return
 
             else : 
                 pass

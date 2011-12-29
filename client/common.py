@@ -3,7 +3,7 @@
 """
     客户端配置程序
 
-    author: zaykl
+    Author: kk
 """
 import os,sys
 import ConfigParser

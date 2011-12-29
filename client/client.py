@@ -3,7 +3,7 @@
 """         
     Description:代理服务client端    
     
-    Author : zaykl
+    Author : Kk
     Email  : liangkazhe@gmail.com
 """
 
