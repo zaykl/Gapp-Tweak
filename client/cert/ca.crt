@@ -1,0 +1,42 @@
+Certificate:
+    Data:
+        Version: 1 (0x0)
+        Serial Number:
+            84:55:eb:9e:2a:9a:50:54
+        Signature Algorithm: NULL
+        Issuer: C=CN, ST=BJ, L=BJ, O=The Onion HTTP Router, OU=Tohr Certificate Authority, CN=Tohr CA
+        Validity
+            Not Before: Aug  7 08:45:27 2009 GMT
+            Not After : Aug  6 08:45:27 2012 GMT
+        Subject: C=CN, ST=BJ, L=BJ, O=The Onion HTTP Router, OU=Tohr Certificate Authority, CN=Tohr CA
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+            RSA Public Key: (1024 bit)
+                Modulus (1024 bit):
+                    00:cb:13:75:d3:fa:8c:8c:2e:1d:b4:5f:ec:bf:3d:
+                    b8:d3:46:dc:1d:d5:8f:8b:0b:20:04:b4:3e:ef:e8:
+                    21:db:09:94:bc:16:c6:34:25:18:c0:a8:9e:4a:d7:
+                    c0:ef:f1:a1:4a:15:5a:c7:f9:9b:f5:43:a0:91:ad:
+                    41:cb:b6:6b:38:a6:bf:bc:75:a8:18:1a:45:da:c2:
+                    60:42:3c:a3:38:35:6f:5e:d1:50:ee:fc:7d:b9:c3:
+                    70:bd:7e:ce:10:ae:81:81:9e:bf:ca:81:ec:fb:8a:
+                    24:36:ec:47:a8:63:11:dc:01:9a:1b:19:66:6a:f6:
+                    c9:af:4a:c5:5d:e1:d7:0d:a3
+                Exponent: 65537 (0x10001)
+    Signature Algorithm: NULL
+-----BEGIN CERTIFICATE-----
+MIICczCCAdwCCQCEVeueKppQVDANBgkqhkiG9w0BAQUFADB+MQswCQYDVQQGEwJD
+TjELMAkGA1UECBMCQkoxCzAJBgNVBAcTAkJKMR4wHAYDVQQKExVUaGUgT25pb24g
+SFRUUCBSb3V0ZXIxIzAhBgNVBAsTGlRvaHIgQ2VydGlmaWNhdGUgQXV0aG9yaXR5
+MRAwDgYDVQQDEwdUb2hyIENBMB4XDTA5MDgwNzA4NDUyN1oXDTEyMDgwNjA4NDUy
+N1owfjELMAkGA1UEBhMCQ04xCzAJBgNVBAgTAkJKMQswCQYDVQQHEwJCSjEeMBwG
+A1UEChMVVGhlIE9uaW9uIEhUVFAgUm91dGVyMSMwIQYDVQQLExpUb2hyIENlcnRp
+ZmljYXRlIEF1dGhvcml0eTEQMA4GA1UEAxMHVG9ociBDQTCBnzANBgkqhkiG9w0B
+AQEFAAOBjQAwgYkCgYEAyxN10/qMjC4dtF/svz2400bcHdWPiwsgBLQ+7+gh2wmU
+vBbGNCUYwKieStfA7/GhShVax/mb9UOgka1By7ZrOKa/vHWoGBpF2sJgQjyjODVv
+XtFQ7vx9ucNwvX7OEK6BgZ6/yoHs+4okNuxHqGMR3AGaGxlmavbJr0rFXeHXDaMC
+AwEAATANBgkqhkiG9w0BAQUFAAOBgQC74uXTV5AZ1lazq9EMbuQ9cBoIClHgwLW6
+/Hztz7C98PoNrqO+f4pewJiKWBIFXP42b6F5FpnLTrLTfUtJoEliJMQ//9SX6z8c
+BgSZVZLWbnyRTtFNOE9gSKEBenHyfTzDx16gtbQ96K8jElKsuGAkEcHJcKBxZPbH
+xZBOh6Sl/Q==
+-----END CERTIFICATE-----
