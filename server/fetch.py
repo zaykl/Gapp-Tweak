@@ -183,26 +183,24 @@ class MainHandler(tornado.web.RequestHandler):
                 return self.handle_error(resp, fileno=fileno, length=length)
                 
             elif resp.code == 599:
-                # 599未知错误使用urllib2重试
-                #req = urllib2.Request(self.path,
-                #                    data=self.req_data['body'],
-                #                    headers=self.req_data['headers'])
-                #try:
-                #    del resp
-                #    resp = urllib2.urlopen(req, timeout=10)
-                #    resp.body = resp.read()
-                #
-                #except urllib2.HTTPError, e:
-                #    resp = e
-                #    resp.body = resp.read()
-                #    
-                #except urllib2.URLError,e:
-                #    logging.info(str(e))
-                #    self.report(u"591", str(e))
-                #    self.finish()
-                #    return
-                self.finish()
-                return
+                # 599未知错误使用urllib2重试,此处造成拥塞 
+                req = urllib2.Request(self.path,
+                                    data=self.req_data['body'],
+                                    headers=self.req_data['headers'])
+                try:
+                    del resp
+                    resp = urllib2.urlopen(req, timeout=5)
+                    resp.body = resp.read()
+                
+                except urllib2.HTTPError, e:
+                    resp = e
+                    resp.body = resp.read()
+                    
+                except urllib2.URLError,e:
+                    logging.info(str(e))
+                    self.report(u"591", str(e))
+                    self.finish()
+                    return
 
             else : 
                 pass
