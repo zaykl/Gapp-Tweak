@@ -88,7 +88,7 @@ class ThreadingTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
 
 class Socks5Server(SocketServer.StreamRequestHandler):
-    def handle_tcp(self, sock, fileno):
+    def handle_tcp(self, sock, fileno, port):
         try:
             blockSize = 4096
             fdset = [sock]
@@ -107,6 +107,7 @@ class Socks5Server(SocketServer.StreamRequestHandler):
                         'fileno':fileno
                         })
                         fetch.send(message)
+                        fetch.read()
 
                         if len(recv) < blockSize:
                             complete = True
@@ -123,23 +124,35 @@ class Socks5Server(SocketServer.StreamRequestHandler):
                         })
                         fetch.send(message)
                         resp = fetch.read()
+                        print resp
+                        print "\n"
                         resp = pickle.loads(resp)
                         isDone = resp['isDone']
-                        print isDone
-                        print "\n"
                         resp = resp['resp']
                         if resp:
-                            if sock.send(resp) <= 0: break
+                            if sock.send(resp) <= 0: 
+                                isDone = True
+                                break
                         else:
                             break
 
-                        if isDone:
+                        if isDone and port == 443:
                             break
+
+                    if isDone and port == 80:
+                        break
 
                 #if remote in r:
                 #    if sock.send(self.decrypt(remote.recv(4096))) <= 0:
                 #        break
         finally:
+            fetch = HttpClient(fetchserver)        
+            message = pickle.dumps({
+              'close':'1',
+              'fileno':fileno
+            })
+            fetch.send(message)
+            fetch.read()
             sock.close()
 
     def encrypt(self, data):
@@ -203,11 +216,11 @@ class Socks5Server(SocketServer.StreamRequestHandler):
 
                 fetch.send(message)
                 fileno = fetch.read()
-                logging.info('connecting %s:%d' % (addr, port[0]))
+                logging.info('connecting %s:%d:%s' % (addr, port[0], fileno))
             except socket.error, e:
                 logging.warn(e)
                 return
-            self.handle_tcp(sock, fileno)
+            self.handle_tcp(sock, fileno, port[0])
         except socket.error, e:
             logging.warn(e)
 

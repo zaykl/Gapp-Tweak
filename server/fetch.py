@@ -58,57 +58,56 @@ class NewMainHandler(tornado.web.RequestHandler):
             port = struct.unpack('>H', path[0:2])
             logging.info('connecting %s:%d' % (addr, port[0]))
 
-            stream = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            #self.stream = iostream.IOStream(s)
-            #self.stream.socket.setblocking(True)
-            #self.stream.connect((addr, port[0]), self.on_connect)
-            # TODO block
-            stream.connect((addr, port[0]))
-            stream.setblocking(True)
-            fd = str(stream.fileno())
-            cls = NewMainHandler
-            cls.filenoList[fd] = stream
-            self.finish(fd)
-        
-        elif "resp" in inMessage:
-            blockSize = 4096
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.stream = iostream.IOStream(s)
+            self.stream.connect((addr, port[0]), self.on_connect)
+
+        elif "close" in inMessage:
             fileno = inMessage["fileno"]
             cls = NewMainHandler
             stream = cls.filenoList[fileno]
+            stream.close()
+            del cls.filenoList[fileno]
+            self.finish()
+
+        elif "resp" in inMessage:
+            fileno = inMessage["fileno"]
+            cls = NewMainHandler
+            self.stream = cls.filenoList[fileno]
+            ioloop = tornado.ioloop.IOLoop.instance()
             try:
-                # TODO block
-                recv = stream.recv(blockSize)
-                if len(recv) < blockSize:
-                    self.on_body(recv, 'done')
-                else:
-                    self.on_body(recv, '')
-                    
-            except Exception:
-                self.on_body("")
-            return
+                ioloop.remove_handler(int(fileno))
+            except Exception,e:
+                print e
+            ioloop.add_handler( int(fileno), self.on_resp, ioloop.READ )
 
         elif "recv" in inMessage:
             fileno = inMessage["fileno"]
             recv = inMessage["recv"]
             cls = NewMainHandler
             stream = cls.filenoList[fileno]
-            stream.send(recv)
+            stream.socket.send(recv)
             self.finish()
-            return
-            #self.stream.read_until("\r\n\r\n", self.on_headers)
-            #self.stream.read_bytes(22, self.on_headers)
 
-    def on_headers(self, data):
-        self.data = data
-        headers = {}
-        for line in data.split("\r\n"):
-           parts = line.split(":")
-           if len(parts) == 2:
-               headers[parts[0].strip()] = parts[1].strip()
-        if "Content-Length" in headers:
-            self.stream.read_bytes(int(headers["Content-Length"]), self.on_body)
-        else:
-            self.stream.read_until_close(self.on_body)
+    def on_resp(self, fd, events):
+        
+        ioloop = tornado.ioloop.IOLoop.instance()
+        ioloop.remove_handler(fd)
+        
+        blockSize = 4096
+        try:
+            recv = self.stream.socket.recv(blockSize)
+            if len(recv) < blockSize:
+                self.on_body(recv, 'done')
+            else:
+                self.on_body(recv, '')
+                
+        except Exception:
+            self.on_body("", "done")
+        return
+
+    def after_write(self):
+        self.finish()
 
     def on_body(self, resp, isDone):
         self.data += resp
