@@ -62,6 +62,7 @@ class NewMainHandler(tornado.web.RequestHandler):
             #self.stream = iostream.IOStream(s)
             #self.stream.socket.setblocking(True)
             #self.stream.connect((addr, port[0]), self.on_connect)
+            # TODO block
             stream.connect((addr, port[0]))
             stream.setblocking(True)
             fd = str(stream.fileno())
@@ -75,7 +76,7 @@ class NewMainHandler(tornado.web.RequestHandler):
             cls = NewMainHandler
             stream = cls.filenoList[fileno]
             try:
-                import pdb;pdb.set_trace()
+                # TODO block
                 recv = stream.recv(blockSize)
                 if len(recv) < blockSize:
                     self.on_body(recv, 'done')
