@@ -98,7 +98,6 @@ class Socks5Server(SocketServer.StreamRequestHandler):
                     recv = sock.recv(blockSize)
 
                     if len(recv) <= 0:break
-                    import pdb;pdb.set_trace()
 
                     while recv:
                         fetch = HttpClient(fetchserver)        
@@ -248,7 +247,7 @@ if __name__ == '__main__':
     decrypt_table = string.maketrans(encrypt_table, string.maketrans('', ''))
     try:
         server = ThreadingTCPServer(('', PORT), Socks5Server)
-        server.allow_reuse_address = True
+        #server.allow_reuse_address = True
         logging.info("starting server at port %d ..." % PORT)
         server.serve_forever()
     except socket.error, e:
