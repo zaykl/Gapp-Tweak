@@ -416,6 +416,8 @@ class IOStream(object):
                 _merge_prefix(self._write_buffer, num_bytes)
                 data = self._write_buffer.popleft()
                 del data
+                #kk avoid blocking while sending the large file to client
+                break
             except socket.error, e:
                 if e.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN):
                     self._write_buffer_frozen = True

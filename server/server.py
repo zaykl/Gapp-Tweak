@@ -20,9 +20,9 @@ def main():
     """
     application = tornado.web.Application(settings.URLMAP)
     http_server = tornado.httpserver.HTTPServer(application)
-    #http_server.listen(settings.PORT)
-    http_server.bind(settings.PORT)
-    http_server.start(0)
+    http_server.listen(settings.PORT)
+    #http_server.bind(settings.PORT)
+    #http_server.start(0)
     print "Server: http://%s:%d/" %(settings.SERVERIP, settings.PORT)
     tornado.ioloop.IOLoop.instance().start()
     

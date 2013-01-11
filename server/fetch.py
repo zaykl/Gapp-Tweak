@@ -7,13 +7,16 @@
 
 import tornado.web
 import tornado.httpserver
+from tornado import iostream
 from tornado import httpclient
 
 import urlparse
 import logging
 import pickle
+import struct
 import urllib2
 import time
+import socket
 from httplib import responses
 
 import settings
@@ -28,6 +31,101 @@ urllib2.install_opener(opener)
 logging.basicConfig(level=logging.INFO)
 
 HTTP_STATUS_MESSAGES = responses
+
+@settings.urlmap("/newfetch.py")
+class NewMainHandler(tornado.web.RequestHandler):
+    filenoList = {}
+    data = ""
+
+    @tornado.web.asynchronous
+    def post(self):
+        
+        inMessage = pickle.loads(self.request.body)
+        if "path" in inMessage:
+            path = inMessage["path"]
+            addrtype = ord(path[0])
+            path = path[1:]
+            if addrtype == 1:
+                addr = socket.inet_ntoa(path[0:4])
+                path = path[4:]
+            elif addrtype == 3:
+                addr = ord(path[0])
+                path = path[1:]
+            else:
+                logging.warn('addr_type not support')
+                self.finish()
+                return
+            port = struct.unpack('>H', path[0:2])
+            logging.info('connecting %s:%d' % (addr, port[0]))
+
+            stream = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            #self.stream = iostream.IOStream(s)
+            #self.stream.socket.setblocking(True)
+            #self.stream.connect((addr, port[0]), self.on_connect)
+            stream.connect((addr, port[0]))
+            stream.setblocking(True)
+            fd = str(stream.fileno())
+            cls = NewMainHandler
+            cls.filenoList[fd] = stream
+            self.finish(fd)
+        
+        elif "resp" in inMessage:
+            blockSize = 4096
+            fileno = inMessage["fileno"]
+            cls = NewMainHandler
+            stream = cls.filenoList[fileno]
+            try:
+                recv = stream.recv(blockSize)
+                if len(recv) < blockSize:
+                    self.on_body(recv, 'done')
+                else:
+                    self.on_body(recv, '')
+                    
+            except Exception:
+                self.on_body("")
+            return
+
+        elif "recv" in inMessage:
+            fileno = inMessage["fileno"]
+            recv = inMessage["recv"]
+            cls = NewMainHandler
+            stream = cls.filenoList[fileno]
+            stream.send(recv)
+            self.finish()
+            return
+            #self.stream.read_until("\r\n\r\n", self.on_headers)
+            #self.stream.read_bytes(22, self.on_headers)
+
+    def on_headers(self, data):
+        self.data = data
+        headers = {}
+        for line in data.split("\r\n"):
+           parts = line.split(":")
+           if len(parts) == 2:
+               headers[parts[0].strip()] = parts[1].strip()
+        if "Content-Length" in headers:
+            self.stream.read_bytes(int(headers["Content-Length"]), self.on_body)
+        else:
+            self.stream.read_until_close(self.on_body)
+
+    def on_body(self, resp, isDone):
+        self.data += resp
+        print self.data
+        message = pickle.dumps({
+                'resp': self.data,
+                'isDone': isDone
+        })
+        self.finish(message)
+    
+    def on_connect(self):
+        fd = str(self.stream.socket.fileno())
+        cls = NewMainHandler
+        cls.filenoList[fd] = self.stream
+        self.finish(fd)
+
+    def get(self):
+        self.write('ok') 
+
 
 @settings.urlmap("/fetch.py")
 class MainHandler(tornado.web.RequestHandler):
