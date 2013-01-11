@@ -124,14 +124,16 @@ class Socks5Server(SocketServer.StreamRequestHandler):
                         resp = fetch.read()
                         resp = pickle.loads(resp)
                         isDone = resp['isDone']
+                        print isDone
+                        print "\n"
                         resp = resp['resp']
                         if resp:
-                            sock.send(resp)
+                            if sock.send(resp) <= 0: break
                         else:
                             break
 
                         if isDone:
-                            break 
+                            break
 
                 #if remote in r:
                 #    if sock.send(self.decrypt(remote.recv(4096))) <= 0:

@@ -75,6 +75,7 @@ class NewMainHandler(tornado.web.RequestHandler):
             cls = NewMainHandler
             stream = cls.filenoList[fileno]
             try:
+                import pdb;pdb.set_trace()
                 recv = stream.recv(blockSize)
                 if len(recv) < blockSize:
                     self.on_body(recv, 'done')
@@ -110,6 +111,7 @@ class NewMainHandler(tornado.web.RequestHandler):
 
     def on_body(self, resp, isDone):
         self.data += resp
+        print "recv------------------------\n"
         print self.data
         message = pickle.dumps({
                 'resp': self.data,
