@@ -200,9 +200,6 @@ class Socks5Server(SocketServer.StreamRequestHandler):
 
                 fetch.send(message)
                 fileno = fetch.read()
-                #remote.connect((addr, port[0]))
-                #remote.connect((SERVER, REMOTE_PORT))
-                #self.send_encrypt(remote, addr_to_send)
                 logging.info('connecting %s:%d' % (addr, port[0]))
             except socket.error, e:
                 logging.warn(e)

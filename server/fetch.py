@@ -1,4 +1,4 @@
-﻿# -*- coding=utf-8 -*-
+# -*- coding=utf-8 -*-
 
 """ 
     代理服务server端                                                                       
