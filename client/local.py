@@ -47,7 +47,8 @@ def get_table(key):
     return table
 
 
-fetchserver = "http://127.0.0.1:7777/newfetch.py"
+#fetchserver = "http://127.0.0.1:7777/newfetch.py"
+fetchserver = "https://proxy2-zaykl.rhcloud.com/newfetch.py"
 
 class HttpClient():
     """
