@@ -77,9 +77,10 @@ class NewMainHandler(tornado.web.RequestHandler):
             ioloop = tornado.ioloop.IOLoop.instance()
             try:
                 ioloop.remove_handler(int(fileno))
+                ioloop.add_handler( int(fileno), self.on_resp, ioloop.READ )
             except Exception,e:
+                self.on_body("", "done")
                 print e
-            ioloop.add_handler( int(fileno), self.on_resp, ioloop.READ )
 
         elif "recv" in inMessage:
             fileno = inMessage["fileno"]
@@ -117,6 +118,7 @@ class NewMainHandler(tornado.web.RequestHandler):
                 'resp': self.data,
                 'isDone': isDone
         })
+        self.set_header(u'Content-Type', u'application/octet-stream')
         self.finish(message)
     
     def on_connect(self):

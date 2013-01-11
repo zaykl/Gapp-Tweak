@@ -88,7 +88,7 @@ class ThreadingTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 
 
 class Socks5Server(SocketServer.StreamRequestHandler):
-    def handle_tcp(self, sock, fileno, port):
+    def handle_tcp(self, sock, fileno, port, fetch):
         try:
             blockSize = 4096
             fdset = [sock]
@@ -101,7 +101,6 @@ class Socks5Server(SocketServer.StreamRequestHandler):
                     if len(recv) <= 0:break
 
                     while recv:
-                        fetch = HttpClient(fetchserver)        
                         message = pickle.dumps({
                         'recv': recv,
                         'fileno':fileno
@@ -117,16 +116,16 @@ class Socks5Server(SocketServer.StreamRequestHandler):
 
                     isDone = False
                     while complete:
-                        fetch = HttpClient(fetchserver)        
                         message = pickle.dumps({
                           'resp':'1',
                           'fileno':fileno
                         })
                         fetch.send(message)
                         resp = fetch.read()
-                        print resp
-                        print "\n"
-                        resp = pickle.loads(resp)
+                        try:
+                            resp = pickle.loads(resp)
+                        except Exception,e:
+                            print resp
                         isDone = resp['isDone']
                         resp = resp['resp']
                         if resp:
@@ -141,12 +140,7 @@ class Socks5Server(SocketServer.StreamRequestHandler):
 
                     if isDone and port == 80:
                         break
-
-                #if remote in r:
-                #    if sock.send(self.decrypt(remote.recv(4096))) <= 0:
-                #        break
         finally:
-            fetch = HttpClient(fetchserver)        
             message = pickle.dumps({
               'close':'1',
               'fileno':fileno
@@ -220,7 +214,7 @@ class Socks5Server(SocketServer.StreamRequestHandler):
             except socket.error, e:
                 logging.warn(e)
                 return
-            self.handle_tcp(sock, fileno, port[0])
+            self.handle_tcp(sock, fileno, port[0], fetch)
         except socket.error, e:
             logging.warn(e)
 
